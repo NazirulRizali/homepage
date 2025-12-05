@@ -68,7 +68,8 @@
             </a>
             <!-- Navigation Links (Simulating Post-Login State) -->
             <nav class="flex items-center space-x-6">
-                <a href="#" class="text-gray-300 hover:text-white transition duration-150 hidden sm:block">My Bookings</a>
+                <!-- MODIFIED: Added renderView call -->
+                <a href="#" onclick="renderView('my-bookings'); return false;" class="text-gray-300 hover:text-white transition duration-150 hidden sm:block">My Bookings</a>
                 <a href="#" class="text-gray-300 hover:text-white transition duration-150 hidden sm:block">Support</a>
                 <a href="#" class="px-3 py-1 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition duration-150">
                     Logout
@@ -95,6 +96,42 @@
     <!-- JAVASCRIPT LOGIC AND TEMPLATES (For Maintenance) -->
     <!-- ======================================================= -->
     <script>
+        // --- 0. APPLICATION STATE (Global Data) ---
+        // This array holds all booking records (simulating a database)
+        let myBookingsData = [
+            // Mock Upcoming Booking
+            {
+                id: 'SR987654',
+                car: 'Ford Mustang GT',
+                location: 'Miami Airport (MIA)',
+                dates: '2026-01-15 to 2026-01-17',
+                total: '$120.00',
+                status: 'Active',
+                statusClass: 'text-primary bg-primary/20',
+                isUpcoming: true
+            },
+            // Mock Past Booking
+            {
+                id: 'SR123456',
+                car: 'Toyota Vios',
+                location: 'SFO',
+                dates: '2025-12-05 to 2025-12-10',
+                total: '$215.50',
+                status: 'Completed',
+                statusClass: 'text-gray-400 bg-gray-700',
+                isUpcoming: false
+            }
+        ];
+
+        // NEW GLOBAL STATE: Stores the user's latest search criteria
+        let currentSearchCriteria = {
+            location: 'San Francisco Airport (SFO)',
+            pickupDate: '2025-12-05',
+            dropoffDate: '2025-12-10',
+            carName: 'Toyota Vios' // Default car for initial booking template
+        };
+
+
         // --- 1. PAGE TEMPLATES (HTML for each view) ---
 
         // A. Search View HTML Template
@@ -108,16 +145,19 @@
                                 <label for="location" class="block text-sm font-medium text-gray-400 mb-1">Pick-up Location</label>
                                 <input type="text" id="location" name="location" required
                                     placeholder="City, Airport, or Address"
+                                    value="${currentSearchCriteria.location}"
                                     class="block w-full px-4 py-2 border bg-gray-700 rounded-lg shadow-inner text-sm">
                             </div>
                             <div>
                                 <label for="pickup-date" class="block text-sm font-medium text-gray-400 mb-1">Pick-up Date</label>
                                 <input type="datetime-local" id="pickup-date" name="pickup-date" required
+                                    value="${currentSearchCriteria.pickupDate}T10:00"
                                     class="block w-full px-4 py-2 border bg-gray-700 rounded-lg shadow-inner text-sm">
                             </div>
                             <div>
                                 <label for="dropoff-date" class="block text-sm font-medium text-gray-400 mb-1">Drop-off Date</label>
                                 <input type="datetime-local" id="dropoff-date" name="dropoff-date" required
+                                    value="${currentSearchCriteria.dropoffDate}T11:00"
                                     class="block w-full px-4 py-2 border bg-gray-700 rounded-lg shadow-inner text-sm">
                             </div>
                         </div>
@@ -177,21 +217,21 @@
                             <h4 class="text-xl font-semibold text-white">Toyota Vios</h4>
                             <p class="text-primary font-bold text-lg mb-2">$35 / day</p>
                             <p class="text-gray-400 text-sm">Fuel-efficient, perfect for city travel and short trips.</p>
-                            <button onclick="renderView('booking')" class="mt-3 w-full py-2 bg-primary rounded-lg text-white font-medium hover:bg-primary-dark transition">Select</button>
+                            <button onclick="selectCarAndRenderBooking('Toyota Vios')" class="mt-3 w-full py-2 bg-primary rounded-lg text-white font-medium hover:bg-primary-dark transition">Select</button>
                         </div>
                         <div class="bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700">
                             <img src="https://placehold.co/400x250/374151/ffffff?text=Honda+City" alt="Honda City" class="rounded-lg mb-3 w-full h-36 object-cover">
                             <h4 class="text-xl font-semibold text-white">Honda City</h4>
                             <p class="text-primary font-bold text-lg mb-2">$40 / day</p>
                             <p class="text-gray-400 text-sm">Reliable, modern sedan with spacious boot space.</p>
-                            <button onclick="renderView('booking')" class="mt-3 w-full py-2 bg-primary rounded-lg text-white font-medium hover:bg-primary-dark transition">Select</button>
+                            <button onclick="selectCarAndRenderBooking('Honda City')" class="mt-3 w-full py-2 bg-primary rounded-lg text-white font-medium hover:bg-primary-dark transition">Select</button>
                         </div>
                         <div class="bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700">
                             <img src="https://placehold.co/400x250/374151/ffffff?text=Small+Hatchback" alt="Small Hatchback" class="rounded-lg mb-3 w-full h-36 object-cover">
                             <h4 class="text-xl font-semibold text-white">Renault Clio (or similar)</h4>
                             <p class="text-primary font-bold text-lg mb-2">$30 / day</p>
                             <p class="text-gray-400 text-sm">Best budget option for parking in tight spaces.</p>
-                            <button onclick="renderView('booking')" class="mt-3 w-full py-2 bg-primary rounded-lg text-white font-medium hover:bg-primary-dark transition">Select</button>
+                            <button onclick="selectCarAndRenderBooking('Renault Clio')" class="mt-3 w-full py-2 bg-primary rounded-lg text-white font-medium hover:bg-primary-dark transition">Select</button>
                         </div>
                     </div>
                 </section>
@@ -205,7 +245,7 @@
                             <h4 class="text-xl font-semibold text-white">Ford Mustang GT</h4>
                             <p class="text-primary font-bold text-lg mb-2">$120 / day</p>
                             <p class="text-gray-400 text-sm">High performance, unforgettable drive on open roads.</p>
-                            <button onclick="renderView('booking')" class="mt-3 w-full py-2 bg-primary rounded-lg text-white font-medium hover:bg-primary-dark transition">Select</button>
+                            <button onclick="selectCarAndRenderBooking('Ford Mustang GT')" class="mt-3 w-full py-2 bg-primary rounded-lg text-white font-medium hover:bg-primary-dark transition">Select</button>
                         </div>
                     </div>
                 </section>
@@ -221,16 +261,16 @@
             </div>
         `;
 
-        // C. Example New Page: Booking Confirmation/Details View
-        const bookingViewTemplate = `
+        // C. Example New Page: Booking Confirmation/Details View (NOW USES currentSearchCriteria)
+        const bookingViewTemplate = (carName, location, pickupDate, dropoffDate) => `
             <div id="booking-view" class="bg-secondary p-8 rounded-xl shadow-2xl border border-gray-700/50">
                 <h2 class="text-3xl font-extrabold text-white mb-6 border-b-4 border-primary pb-2">Booking Details & Payment</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-300">
                     <div>
                         <h4 class="text-xl font-semibold text-primary mb-3">Your Selection</h4>
-                        <p><strong>Car:</strong> Toyota Vios</p>
-                        <p><strong>Location:</strong> San Francisco Airport (SFO)</p>
-                        <p><strong>Dates:</strong> 2025-12-05 to 2025-12-10</p>
+                        <p><strong>Car:</strong> ${carName}</p>
+                        <p><strong>Location:</strong> ${location}</p>
+                        <p><strong>Dates:</strong> ${pickupDate} to ${dropoffDate}</p>
                     </div>
                     <div>
                         <h4 class="text-xl font-semibold text-primary mb-3">Price Summary</h4>
@@ -322,19 +362,79 @@
             </div>
         `;
 
+        // E. My Bookings View HTML Template (NOW DYNAMICALLY GENERATED)
+        // This function builds the HTML by iterating over the data array.
+        const myBookingsViewTemplate = () => {
+            let bookingCardsHTML = myBookingsData.map(booking => `
+                <!-- Booking Card: ${booking.status} -->
+                <div class="bg-gray-800 p-6 rounded-xl shadow-lg border ${booking.isUpcoming ? 'border-primary/50' : 'border-gray-700'}">
+                    <div class="flex justify-between items-start mb-3">
+                        <h4 class="text-xl font-semibold text-white">${booking.isUpcoming ? 'Upcoming Rental' : 'Past Rental'}</h4>
+                        <span class="text-sm font-medium ${booking.statusClass} px-3 py-1 rounded-full">${booking.status}</span>
+                    </div>
+                    <p class="text-lg font-bold text-gray-300 mb-2">${booking.car}</p>
+                    <div class="grid grid-cols-2 text-gray-400 text-sm gap-y-1">
+                        <div><span class="font-medium">ID:</span> ${booking.id}</div>
+                        <div><span class="font-medium">Total:</span> ${booking.total}</div>
+                        <div class="col-span-2"><span class="font-medium">Dates:</span> ${booking.dates}</div>
+                        <div class="col-span-2"><span class="font-medium">Location:</span> ${booking.location}</div>
+                    </div>
+                    <div class="mt-4 flex justify-end space-x-3">
+                        ${booking.isUpcoming 
+                            ? `<button class="text-sm text-gray-400 hover:text-white transition">View Details</button>
+                               <button class="px-3 py-1 text-sm bg-red-600 rounded-lg text-white hover:bg-red-700 transition">Cancel</button>`
+                            : `<button onclick="alert('Simulating PDF download for past booking ${booking.id}')" class="text-sm text-gray-400 hover:text-white transition">Download Receipt</button>`
+                        }
+                    </div>
+                </div>
+            `).join('');
+
+            return `
+                <div id="my-bookings-view">
+                    <h2 class="text-3xl font-extrabold text-white mb-8 border-b-4 border-primary pb-2">
+                        MY BOOKINGS (${myBookingsData.length} Total)
+                    </h2>
+                    <div class="space-y-6">
+                        ${bookingCardsHTML}
+                        <!-- Button to return to dashboard -->
+                        <div class="pt-8 text-center">
+                            <button onclick="renderView('search')"
+                                    class="inline-flex items-center py-2 px-6 rounded-lg shadow-md text-sm font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 transition duration-150 ease-in-out">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l-2 2m0 0l-7 7m7-7v10a1 1 0 01-1 1h-3"></path></svg>
+                                Back to Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
 
         // --- 2. VIEW MANAGEMENT ---
         const views = {
             'search': searchViewTemplate,
             'list': carListViewTemplate,
             'booking': bookingViewTemplate,
+            'my-bookings': myBookingsViewTemplate, // NOTE: This is now a function
         };
 
         // Function to handle client-side routing/view switching
         function renderView(viewName) {
             const appContent = document.getElementById('app-content');
-            const template = views[viewName];
+            let template = views[viewName];
             
+            // Execute the template function if it's dynamic (like 'my-bookings' or 'booking')
+            if (viewName === 'booking') {
+                template = template(
+                    currentSearchCriteria.carName, 
+                    currentSearchCriteria.location, 
+                    currentSearchCriteria.pickupDate.split('T')[0], // Extract only date part
+                    currentSearchCriteria.dropoffDate.split('T')[0] // Extract only date part
+                );
+            } else if (typeof template === 'function') {
+                template = template();
+            }
+
             if (template) {
                 appContent.innerHTML = template;
                 window.scrollTo(0, 0); // Scroll to top of the page on view change
@@ -349,20 +449,32 @@
         window.handleSearch = function(event) {
             event.preventDefault();
 
-            const location = document.getElementById('location').value;
-            const pickup = document.getElementById('pickup-date').value;
-            const dropoff = document.getElementById('dropoff-date').value;
+            const locationInput = document.getElementById('location');
+            const pickupInput = document.getElementById('pickup-date');
+            const dropoffInput = document.getElementById('dropoff-date');
             const feedbackBox = document.getElementById('search-feedback-message');
             
-            if (!location || !pickup || !dropoff) {
+            if (!locationInput.value || !pickupInput.value || !dropoffInput.value) {
                 feedbackBox.classList.remove('hidden');
                 feedbackBox.classList.add('bg-red-900/50', 'text-red-300', 'border-red-700');
                 feedbackBox.innerHTML = 'Please fill in all search fields (Location, Pick-up, and Drop-off dates).';
                 return;
             }
+
+            // FIX: Store the actual search criteria
+            currentSearchCriteria.location = locationInput.value;
+            currentSearchCriteria.pickupDate = pickupInput.value;
+            currentSearchCriteria.dropoffDate = dropoffInput.value;
             
             renderView('list');
         }
+
+        // Action taken when a car is selected from the list view
+        window.selectCarAndRenderBooking = function(carName) {
+            currentSearchCriteria.carName = carName;
+            renderView('booking');
+        }
+
 
         // Handles payment confirmation and triggers PDF generation
         window.handleFinalBooking = function() {
@@ -372,7 +484,6 @@
             
             // Basic input validation
             if (!phone || phone.length < 5) {
-                // We use DOM manipulation here for instant feedback on the input field itself
                 phoneInput.style.borderColor = '#ef4444'; 
                 phoneInput.focus();
                 return;
@@ -380,25 +491,37 @@
                 phoneInput.style.borderColor = '#374151'; 
             }
 
-            // 1. Collect Summary Data (Ideally, this would be dynamic based on car selected)
+            // 1. Collect Summary Data (Now uses currentSearchCriteria)
             const bookingData = {
-                car: "Toyota Vios",
-                location: "San Francisco Airport (SFO)",
-                dates: "2025-12-05 to 2025-12-10",
+                car: currentSearchCriteria.carName,
+                location: currentSearchCriteria.location,
+                dates: `${currentSearchCriteria.pickupDate.split('T')[0]} to ${currentSearchCriteria.dropoffDate.split('T')[0]}`,
                 total: document.getElementById('booking-total-price').textContent,
                 phone: countryCode + " " + phoneInput.value,
-                bookingId: 'SR' + Math.floor(Math.random() * 900000 + 100000)
+                bookingId: 'SR' + Math.floor(Math.random() * 900000 + 100000),
+                status: 'Active',
+                statusClass: 'text-primary bg-primary/20',
+                isUpcoming: true
             };
 
-            // 2. Simulate success feedback on the button
+            // 2. SAVE NEW BOOKING TO DATA ARRAY
+            myBookingsData.push(bookingData);
+
+            // 3. Simulate success feedback on the button (This will be overwritten by the view change)
             const payButton = document.querySelector('#booking-view button:last-child');
             payButton.innerHTML = 'Payment Confirmed!';
             payButton.classList.remove('bg-primary', 'hover:bg-primary-dark');
             payButton.classList.add('bg-green-600');
             payButton.disabled = true;
 
-            // 3. Generate and prompt for PDF
+            // 4. Generate and prompt for PDF
             generatePDFReceipt(bookingData);
+            
+            // 5. REDIRECT to the updated My Bookings page
+            // Use a timeout to ensure the print dialog has a moment to appear before redirect
+            setTimeout(() => {
+                renderView('my-bookings');
+            }, 600);
         }
         
         // Function to generate and prompt for the PDF receipt
@@ -407,36 +530,18 @@
             const originalAppContent = appContainer.innerHTML;
             
             // Temporarily replace the entire body content with the receipt HTML
-            // This is required to ensure only the receipt prints cleanly.
             appContainer.innerHTML = receiptViewTemplate(data);
             
             // Trigger the browser's native print dialog (Print to PDF option)
             window.print();
             
             // Restore the original page state after printing is triggered
-            // Use a slight delay to ensure the print dialog opens before restoration
             setTimeout(() => {
+                // Restore the entire original HTML content
                 appContainer.innerHTML = originalAppContent;
                 
-                // Re-initialize the final view to show the 'Payment Confirmed' status
-                // Need to re-run this to attach the event handlers again since we replaced innerHTML
-                renderView('booking'); 
-                
-                // Show final confirmation message on the booking view
-                const bookingViewContainer = document.getElementById('booking-view');
-                if(bookingViewContainer) {
-                    let confirmationMessage = document.createElement('div');
-                    confirmationMessage.className = 'mt-4 p-3 bg-green-900/50 text-green-300 rounded-lg text-center';
-                    confirmationMessage.innerHTML = `Booking Confirmed! Please check your browser's Print/PDF download settings for the receipt (ID: ${data.bookingId}).`;
-                    bookingViewContainer.insertBefore(confirmationMessage, bookingViewContainer.querySelector('.mt-8.flex'));
-                    
-                    // Also ensure the button stays disabled and confirmed after restoration
-                    const payButton = document.querySelector('#booking-view button:last-child');
-                    payButton.innerHTML = 'Payment Confirmed!';
-                    payButton.classList.remove('bg-primary', 'hover:bg-primary-dark');
-                    payButton.classList.add('bg-green-600');
-                    payButton.disabled = true;
-                }
+                // We don't need to call renderView('my-bookings') here, as it's called in handleFinalBooking after this timeout.
+                // However, we restore the original content temporarily to ensure subsequent renders work correctly.
             }, 500);
         }
 
