@@ -40,6 +40,21 @@
             box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.3); 
             border-color: #f97316;
         }
+
+        /* --- 3. PRINT STYLES (Ensures header/footer don't appear on the PDF) --- */
+        @media print {
+            header, footer, button, .no-print {
+                display: none !important;
+            }
+            body, main {
+                background-color: #fff !important;
+            }
+            #app-content > div { /* Only print the receipt content */
+                margin: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-900 min-h-screen font-sans flex flex-col">
@@ -49,7 +64,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <!-- Logo / App Name -->
             <a href="#" class="text-3xl font-extrabold text-primary tracking-wider">
-                CARENT <span class="text-white">YourSafeCarRent</span>
+                SafeRent <span class="text-white">Car</span>
             </a>
             <!-- Navigation Links (Simulating Post-Login State) -->
             <nav class="flex items-center space-x-6">
@@ -231,7 +246,7 @@
                 <h4 class="text-xl font-semibold text-white mt-8 mb-4">Payment Information</h4>
                 <div class="bg-gray-700 p-6 rounded-lg space-y-4">
 
-                    <!-- NEW: PHONE NUMBER INPUT FOR WHATSAPP CONFIRMATION -->
+                    <!-- PHONE NUMBER INPUT -->
                     <div class="grid grid-cols-3 gap-4">
                         <div class="col-span-1">
                             <label for="booking-country-code" class="block text-xs font-medium text-gray-400 mb-1">Country Code</label>
@@ -239,6 +254,7 @@
                                 class="block w-full px-2 py-2 border bg-gray-800 rounded-lg shadow-inner text-sm">
                                 <option value="+1" selected>+1</option>
                                 <option value="+44">+44</option>
+                                <option value="+60">+60 (MY)</option>
                                 <option value="+91">+91</option>
                                 <option value="+61">+61</option>
                                 <option value="+33">+33</option>
@@ -252,7 +268,6 @@
                                 class="block w-full px-4 py-2 border bg-gray-800 rounded-lg shadow-inner text-sm">
                         </div>
                     </div>
-                    <!-- END NEW PHONE NUMBER INPUT -->
 
                     <input type="text" placeholder="Card Number" class="block w-full px-4 py-2 border bg-gray-800 rounded-lg shadow-inner text-sm">
                     <div class="grid grid-cols-2 gap-4">
@@ -263,11 +278,47 @@
 
                 <div class="mt-8 flex justify-between">
                     <button onclick="renderView('list')" class="py-2 px-4 text-sm rounded-lg text-gray-400 hover:text-white transition">← Back to Car List</button>
-                    <button onclick="handlePaymentConfirmation()"
+                    <button onclick="handleFinalBooking()"
                             class="py-3 px-8 rounded-lg text-white font-bold bg-primary hover:bg-primary-dark transition duration-150">
                         Confirm & Pay $215.50
                     </button>
                 </div>
+            </div>
+        `;
+
+        // D. PDF Receipt Template (used internally by generatePDFReceipt)
+        const receiptViewTemplate = (data) => `
+            <div id="print-area" class="p-8 bg-white text-gray-900 mx-auto max-w-xl shadow-2xl">
+                <h1 class="text-3xl font-bold text-primary mb-1">BOOKING CONFIRMATION</h1>
+                <p class="text-sm text-gray-600 mb-6">Receipt for Booking ID: ${data.bookingId}</p>
+
+                <div class="space-y-4 border-t border-b border-gray-300 py-4 mb-4">
+                    <div class="flex justify-between">
+                        <span class="font-semibold">Car Model:</span>
+                        <span>${data.car}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-semibold">Pick-up Location:</span>
+                        <span>${data.location}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-semibold">Rental Period:</span>
+                        <span>${data.dates}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-semibold">Contact Phone:</span>
+                        <span>${data.phone}</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-between text-2xl font-extrabold text-primary pt-2">
+                    <span>TOTAL PAID:</span>
+                    <span>${data.total}</span>
+                </div>
+
+                <p class="text-xs text-center text-gray-500 mt-6">
+                    Thank you for choosing SafeRent Car. Please save this PDF copy for verification.
+                </p>
             </div>
         `;
 
@@ -292,7 +343,9 @@
             }
         }
         
-        // --- 3. FORM HANDLING (Must be globally accessible since they are called from template buttons) ---
+        // --- 3. FORM/BOOKING HANDLING ---
+        
+        // Search form submission
         window.handleSearch = function(event) {
             event.preventDefault();
 
@@ -301,71 +354,90 @@
             const dropoff = document.getElementById('dropoff-date').value;
             const feedbackBox = document.getElementById('search-feedback-message');
             
-            // Basic validation
             if (!location || !pickup || !dropoff) {
                 feedbackBox.classList.remove('hidden');
-                feedbackBox.classList.remove('bg-green-900/50', 'text-green-300', 'border-green-700');
                 feedbackBox.classList.add('bg-red-900/50', 'text-red-300', 'border-red-700');
                 feedbackBox.innerHTML = 'Please fill in all search fields (Location, Pick-up, and Drop-off dates).';
                 return;
             }
             
-            // Success: Transition to the car list view
             renderView('list');
         }
 
-        // NEW FUNCTION: Handles payment confirmation and WhatsApp generation
-        window.handlePaymentConfirmation = function() {
-            const countryCode = document.getElementById('booking-country-code').value.replace('+', '');
-            // Clean phone number: removes spaces and hyphens
+        // Handles payment confirmation and triggers PDF generation
+        window.handleFinalBooking = function() {
+            const countryCode = document.getElementById('booking-country-code').value;
             const phoneInput = document.getElementById('booking-phone');
             const phone = phoneInput.value.replace(/[^0-9]/g, '');
             
             // Basic input validation
             if (!phone || phone.length < 5) {
-                phoneInput.style.borderColor = '#ef4444'; // Red border on error
+                // We use DOM manipulation here for instant feedback on the input field itself
+                phoneInput.style.borderColor = '#ef4444'; 
                 phoneInput.focus();
                 return;
             } else {
-                phoneInput.style.borderColor = '#374151'; // Reset border
+                phoneInput.style.borderColor = '#374151'; 
             }
 
+            // 1. Collect Summary Data (Ideally, this would be dynamic based on car selected)
+            const bookingData = {
+                car: "Toyota Vios",
+                location: "San Francisco Airport (SFO)",
+                dates: "2025-12-05 to 2025-12-10",
+                total: document.getElementById('booking-total-price').textContent,
+                phone: countryCode + " " + phoneInput.value,
+                bookingId: 'SR' + Math.floor(Math.random() * 900000 + 100000)
+            };
 
-            // --- Collect Summary Data (Placeholder) ---
-            const car = "Toyota Vios";
-            const location = "San Francisco Airport (SFO)";
-            const dates = "2025-12-05 to 2025-12-10";
-            // Safely get the price without the '$' sign
-            const total = document.getElementById('booking-total-price').textContent; 
-
-            // --- Construct the WhatsApp Message ---
-            const message = `
-*--- Car Rental Confirmation ---*
-Thank you for booking with SafeRent Car!
-
-*Booking Summary:*
-Car: ${car}
-Pick-up/Drop-off: ${location}
-Dates: ${dates}
-Total Paid: ${total}
-
-Your confirmation details are available on our website. Safe travels!
-`;
-            
-            // --- Encode Message and Construct WhatsApp URL ---
-            const encodedMessage = encodeURIComponent(message);
-            // WhatsApp link format: wa.me/countrycode[no +]phonenumber
-            const waLink = `https://wa.me/${countryCode}${phone}?text=${encodedMessage}`;
-
-            // --- Open the WhatsApp link ---
-            window.open(waLink, '_blank');
-            
-            // --- Provide Visual Feedback (Simulated Payment Success) ---
+            // 2. Simulate success feedback on the button
             const payButton = document.querySelector('#booking-view button:last-child');
-            payButton.innerHTML = 'Confirmed (Check WhatsApp)!';
+            payButton.innerHTML = 'Payment Confirmed!';
             payButton.classList.remove('bg-primary', 'hover:bg-primary-dark');
             payButton.classList.add('bg-green-600');
             payButton.disabled = true;
+
+            // 3. Generate and prompt for PDF
+            generatePDFReceipt(bookingData);
+        }
+        
+        // Function to generate and prompt for the PDF receipt
+        function generatePDFReceipt(data) {
+            const appContainer = document.querySelector('body');
+            const originalAppContent = appContainer.innerHTML;
+            
+            // Temporarily replace the entire body content with the receipt HTML
+            // This is required to ensure only the receipt prints cleanly.
+            appContainer.innerHTML = receiptViewTemplate(data);
+            
+            // Trigger the browser's native print dialog (Print to PDF option)
+            window.print();
+            
+            // Restore the original page state after printing is triggered
+            // Use a slight delay to ensure the print dialog opens before restoration
+            setTimeout(() => {
+                appContainer.innerHTML = originalAppContent;
+                
+                // Re-initialize the final view to show the 'Payment Confirmed' status
+                // Need to re-run this to attach the event handlers again since we replaced innerHTML
+                renderView('booking'); 
+                
+                // Show final confirmation message on the booking view
+                const bookingViewContainer = document.getElementById('booking-view');
+                if(bookingViewContainer) {
+                    let confirmationMessage = document.createElement('div');
+                    confirmationMessage.className = 'mt-4 p-3 bg-green-900/50 text-green-300 rounded-lg text-center';
+                    confirmationMessage.innerHTML = `Booking Confirmed! Please check your browser's Print/PDF download settings for the receipt (ID: ${data.bookingId}).`;
+                    bookingViewContainer.insertBefore(confirmationMessage, bookingViewContainer.querySelector('.mt-8.flex'));
+                    
+                    // Also ensure the button stays disabled and confirmed after restoration
+                    const payButton = document.querySelector('#booking-view button:last-child');
+                    payButton.innerHTML = 'Payment Confirmed!';
+                    payButton.classList.remove('bg-primary', 'hover:bg-primary-dark');
+                    payButton.classList.add('bg-green-600');
+                    payButton.disabled = true;
+                }
+            }, 500);
         }
 
 
