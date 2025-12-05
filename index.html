@@ -23,13 +23,18 @@
             }
         }
     </script>
+
+    <!-- ======================================================= -->
+    <!-- CSS STYLES FOR MAINTENANCE (Normally in style.css) -->
+    <!-- ======================================================= -->
     <style>
-        /* General dark mode styling for inputs/selects */
+        /* --- 1. GLOBAL INPUT STYLING --- */
         input, select {
             color: #ffffff;
             border-color: #374151; /* Gray-700 */
         }
-        /* Focus ring styling */
+        
+        /* --- 2. FOCUS EFFECTS --- */
         input:focus, select:focus {
             transition: all 0.2s ease-in-out;
             box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.3); 
@@ -44,7 +49,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <!-- Logo / App Name -->
             <a href="#" class="text-3xl font-extrabold text-primary tracking-wider">
-                CARENT <span class="text-white">YourSafeCarRent</span>
+                SafeRent <span class="text-white">Car</span>
             </a>
             <!-- Navigation Links (Simulating Post-Login State) -->
             <nav class="flex items-center space-x-6">
@@ -57,97 +62,10 @@
         </div>
     </header>
 
-    <!-- Main Content Area -->
+    <!-- Main Content Area: Now just a container for the dynamic content -->
     <main class="flex-grow p-4 sm:p-8 lg:p-12">
-        <div class="max-w-5xl mx-auto">
-            
-            <!-- Hero Search Widget Container -->
-            <div class="bg-secondary p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-700/50 mb-12">
-                <h2 class="text-2xl font-bold text-white mb-6">Find Your Perfect Ride</h2>
-
-                <form id="car-search-form" onsubmit="handleSearch(event)">
-                    
-                    <!-- Search Inputs Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-
-                        <!-- Location Input -->
-                        <div class="md:col-span-2">
-                            <label for="location" class="block text-sm font-medium text-gray-400 mb-1">Pick-up Location</label>
-                            <input type="text" id="location" name="location" required
-                                   placeholder="City, Airport, or Address"
-                                   class="block w-full px-4 py-2 border bg-gray-700 rounded-lg shadow-inner text-sm">
-                        </div>
-
-                        <!-- Pick-up Date & Time -->
-                        <div>
-                            <label for="pickup-date" class="block text-sm font-medium text-gray-400 mb-1">Pick-up Date</label>
-                            <input type="datetime-local" id="pickup-date" name="pickup-date" required
-                                   class="block w-full px-4 py-2 border bg-gray-700 rounded-lg shadow-inner text-sm">
-                        </div>
-
-                        <!-- Drop-off Date & Time -->
-                        <div>
-                            <label for="dropoff-date" class="block text-sm font-medium text-gray-400 mb-1">Drop-off Date</label>
-                            <input type="datetime-local" id="dropoff-date" name="dropoff-date" required
-                                   class="block w-full px-4 py-2 border bg-gray-700 rounded-lg shadow-inner text-sm">
-                        </div>
-                        
-                    </div>
-                    
-                    <!-- Search Button (Full width on mobile, separate row for emphasis) -->
-                    <div class="mt-6">
-                        <button type="submit"
-                                class="w-full py-3 px-4 rounded-lg shadow-xl text-base font-bold text-white bg-primary hover:bg-primary-dark transition duration-150 ease-in-out">
-                            Search for Cars
-                        </button>
-                    </div>
-
-                </form>
-            </div>
-            
-            <!-- Featured Deals Section -->
-            <section class="mt-12">
-                <h3 class="text-2xl font-bold text-white mb-6 border-b border-gray-700 pb-2">
-                    Exclusive Offers
-                </h3>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    
-                    <!-- Deal Card 1 -->
-                    <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700/50 hover:border-primary transition duration-300">
-                        <img src="https://placehold.co/600x400/1f2937/ffffff?text=Economy+Car" alt="Economy Car Offer" class="rounded-lg mb-4 w-full h-32 object-cover">
-                        <h4 class="text-xl font-semibold text-white mb-2">Weekend Special</h4>
-                        <p class="text-gray-400 text-sm mb-4">Save 20% on any economy class vehicle for 3-day rentals.</p>
-                        <a href="#" class="text-primary hover:text-primary-dark font-medium text-sm flex items-center">
-                            Book Now 
-                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </a>
-                    </div>
-
-                    <!-- Deal Card 2 -->
-                    <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700/50 hover:border-primary transition duration-300">
-                        <img src="https://placehold.co/600x400/1f2937/ffffff?text=SUV+Vehicle" alt="SUV Offer" class="rounded-lg mb-4 w-full h-32 object-cover">
-                        <h4 class="text-xl font-semibold text-white mb-2">Family Adventure</h4>
-                        <p class="text-gray-400 text-sm mb-4">15% off all SUVs and minivans for rentals over 5 days.</p>
-                        <a href="#" class="text-primary hover:text-primary-dark font-medium text-sm flex items-center">
-                            Book Now 
-                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </a>
-                    </div>
-                    
-                    <!-- Deal Card 3 -->
-                    <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700/50 hover:border-primary transition duration-300">
-                        <img src="https://placehold.co/600x400/1f2937/ffffff?text=Luxury+Sedan" alt="Luxury Car Offer" class="rounded-lg mb-4 w-full h-32 object-cover">
-                        <h4 class="text-xl font-semibold text-white mb-2">Premium Travel</h4>
-                        <p class="text-gray-400 text-sm mb-4">Upgrade to a luxury sedan at the price of a standard car.</p>
-                        <a href="#" class="text-primary hover:text-primary-dark font-medium text-sm flex items-center">
-                            Book Now 
-                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </a>
-                    </div>
-                    
-                </div>
-            </section>
+        <div class="max-w-5xl mx-auto" id="app-content">
+            <!-- Dynamic content (search view or list view) will be injected here -->
         </div>
     </main>
 
@@ -158,37 +76,226 @@
         </div>
     </footer>
     
+    <!-- ======================================================= -->
+    <!-- JAVASCRIPT LOGIC AND TEMPLATES (For Maintenance) -->
+    <!-- ======================================================= -->
     <script>
-        // Placeholder function for handling the car search submission
-        function handleSearch(event) {
-            event.preventDefault(); // Prevent page reload
+        // --- 1. PAGE TEMPLATES (HTML for each view) ---
+
+        // A. Search View HTML Template
+        const searchViewTemplate = `
+            <div id="search-view">
+                <div class="bg-secondary p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-700/50 mb-12">
+                    <h2 class="text-2xl font-bold text-white mb-6">Find Your Perfect Ride</h2>
+                    <form id="car-search-form" onsubmit="handleSearch(event)">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="md:col-span-2">
+                                <label for="location" class="block text-sm font-medium text-gray-400 mb-1">Pick-up Location</label>
+                                <input type="text" id="location" name="location" required
+                                    placeholder="City, Airport, or Address"
+                                    class="block w-full px-4 py-2 border bg-gray-700 rounded-lg shadow-inner text-sm">
+                            </div>
+                            <div>
+                                <label for="pickup-date" class="block text-sm font-medium text-gray-400 mb-1">Pick-up Date</label>
+                                <input type="datetime-local" id="pickup-date" name="pickup-date" required
+                                    class="block w-full px-4 py-2 border bg-gray-700 rounded-lg shadow-inner text-sm">
+                            </div>
+                            <div>
+                                <label for="dropoff-date" class="block text-sm font-medium text-gray-400 mb-1">Drop-off Date</label>
+                                <input type="datetime-local" id="dropoff-date" name="dropoff-date" required
+                                    class="block w-full px-4 py-2 border bg-gray-700 rounded-lg shadow-inner text-sm">
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <button type="submit"
+                                    class="w-full py-3 px-4 rounded-lg shadow-xl text-base font-bold text-white bg-primary hover:bg-primary-dark transition duration-150 ease-in-out">
+                                Search for Cars
+                            </button>
+                        </div>
+                    </form>
+                    <div id="search-feedback-message" class="mt-4 hidden p-4 rounded-lg text-center font-medium bg-red-900/50 text-red-300 border border-red-700"></div>
+                </div>
+                
+                <!-- Featured Deals Section -->
+                <section class="mt-12">
+                    <h3 class="text-2xl font-bold text-white mb-6 border-b border-gray-700 pb-2">
+                        Exclusive Offers
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Deal Card 1 -->
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700/50 hover:border-primary transition duration-300">
+                            <img src="https://placehold.co/600x400/1f2937/ffffff?text=Economy+Car" alt="Economy Car Offer" class="rounded-lg mb-4 w-full h-32 object-cover">
+                            <h4 class="text-xl font-semibold text-white mb-2">Weekend Special</h4>
+                            <p class="text-gray-400 text-sm mb-4">Save 20% on any economy class vehicle for 3-day rentals.</p>
+                            <a href="#" class="text-primary hover:text-primary-dark font-medium text-sm flex items-center">Book Now <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></a>
+                        </div>
+                        <!-- Deal Card 2 -->
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700/50 hover:border-primary transition duration-300">
+                            <img src="https://placehold.co/600x400/1f2937/ffffff?text=SUV+Vehicle" alt="SUV Offer" class="rounded-lg mb-4 w-full h-32 object-cover">
+                            <h4 class="text-xl font-semibold text-white mb-2">Family Adventure</h4>
+                            <p class="text-gray-400 text-sm mb-4">15% off all SUVs and minivans for rentals over 5 days.</p>
+                            <a href="#" class="text-primary hover:text-primary-dark font-medium text-sm flex items-center">Book Now <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></a>
+                        </div>
+                        <!-- Deal Card 3 -->
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700/50 hover:border-primary transition duration-300">
+                            <img src="https://placehold.co/600x400/1f2937/ffffff?text=Luxury+Sedan" alt="Luxury Car Offer" class="rounded-lg mb-4 w-full h-32 object-cover">
+                            <h4 class="text-xl font-semibold text-white mb-2">Premium Travel</h4>
+                            <p class="text-gray-400 text-sm mb-4">Upgrade to a luxury sedan at the price of a standard car.</p>
+                            <a href="#" class="text-primary hover:text-primary-dark font-medium text-sm flex items-center">Book Now <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        `;
+
+        // B. Car List View HTML Template
+        const carListViewTemplate = `
+            <div id="list-view">
+                <h2 class="text-3xl font-extrabold text-white mb-8 border-b-4 border-primary pb-2">CAR LIST</h2>
+                
+                <!-- Category: Economy Cars -->
+                <section class="mb-10">
+                    <h3 class="text-2xl font-bold text-gray-300 mb-4">Economy & Compact (Vios, Honda City)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700">
+                            <img src="https://placehold.co/400x250/374151/ffffff?text=Vios" alt="Toyota Vios" class="rounded-lg mb-3 w-full h-36 object-cover">
+                            <h4 class="text-xl font-semibold text-white">Toyota Vios</h4>
+                            <p class="text-primary font-bold text-lg mb-2">$35 / day</p>
+                            <p class="text-gray-400 text-sm">Fuel-efficient, perfect for city travel and short trips.</p>
+                            <button onclick="renderView('booking')" class="mt-3 w-full py-2 bg-primary rounded-lg text-white font-medium hover:bg-primary-dark transition">Select</button>
+                        </div>
+                        <div class="bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700">
+                            <img src="https://placehold.co/400x250/374151/ffffff?text=Honda+City" alt="Honda City" class="rounded-lg mb-3 w-full h-36 object-cover">
+                            <h4 class="text-xl font-semibold text-white">Honda City</h4>
+                            <p class="text-primary font-bold text-lg mb-2">$40 / day</p>
+                            <p class="text-gray-400 text-sm">Reliable, modern sedan with spacious boot space.</p>
+                            <button onclick="renderView('booking')" class="mt-3 w-full py-2 bg-primary rounded-lg text-white font-medium hover:bg-primary-dark transition">Select</button>
+                        </div>
+                        <div class="bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700">
+                            <img src="https://placehold.co/400x250/374151/ffffff?text=Small+Hatchback" alt="Small Hatchback" class="rounded-lg mb-3 w-full h-36 object-cover">
+                            <h4 class="text-xl font-semibold text-white">Renault Clio (or similar)</h4>
+                            <p class="text-primary font-bold text-lg mb-2">$30 / day</p>
+                            <p class="text-gray-400 text-sm">Best budget option for parking in tight spaces.</p>
+                            <button onclick="renderView('booking')" class="mt-3 w-full py-2 bg-primary rounded-lg text-white font-medium hover:bg-primary-dark transition">Select</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Category: Sports & Luxury -->
+                <section class="mb-10">
+                    <h3 class="text-2xl font-bold text-gray-300 mb-4">Sports & Performance (Mustang)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700">
+                            <img src="https://placehold.co/400x250/374151/ffffff?text=Mustang" alt="Ford Mustang" class="rounded-lg mb-3 w-full h-36 object-cover">
+                            <h4 class="text-xl font-semibold text-white">Ford Mustang GT</h4>
+                            <p class="text-primary font-bold text-lg mb-2">$120 / day</p>
+                            <p class="text-gray-400 text-sm">High performance, unforgettable drive on open roads.</p>
+                            <button onclick="renderView('booking')" class="mt-3 w-full py-2 bg-primary rounded-lg text-white font-medium hover:bg-primary-dark transition">Select</button>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Back to Search Button -->
+                <div class="mt-10 text-center">
+                    <button onclick="renderView('search')"
+                            class="inline-flex items-center py-2 px-6 rounded-lg shadow-md text-sm font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 transition duration-150 ease-in-out">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path></svg>
+                        Modify Search
+                    </button>
+                </div>
+            </div>
+        `;
+
+        // C. Example New Page: Booking Confirmation/Details View
+        const bookingViewTemplate = `
+            <div id="booking-view" class="bg-secondary p-8 rounded-xl shadow-2xl border border-gray-700/50">
+                <h2 class="text-3xl font-extrabold text-white mb-6 border-b-4 border-primary pb-2">Booking Details & Payment</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-300">
+                    <div>
+                        <h4 class="text-xl font-semibold text-primary mb-3">Your Selection</h4>
+                        <p><strong>Car:</strong> Toyota Vios</p>
+                        <p><strong>Location:</strong> San Francisco Airport (SFO)</p>
+                        <p><strong>Dates:</strong> 2025-12-05 to 2025-12-10</p>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-primary mb-3">Price Summary</h4>
+                        <ul class="space-y-1">
+                            <li>Rental Fee (5 days): <span class="float-right">$175.00</span></li>
+                            <li>Insurance: <span class="float-right">$25.00</span></li>
+                            <li>Taxes & Fees: <span class="float-right">$15.50</span></li>
+                            <li class="pt-2 border-t border-gray-700 text-2xl font-bold text-white">Total: <span class="float-right text-primary">$215.50</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h4 class="text-xl font-semibold text-white mt-8 mb-4">Payment Information</h4>
+                <div class="bg-gray-700 p-6 rounded-lg space-y-4">
+                    <input type="text" placeholder="Card Number" class="block w-full px-4 py-2 border bg-gray-800 rounded-lg shadow-inner text-sm">
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="text" placeholder="MM/YY" class="px-4 py-2 border bg-gray-800 rounded-lg shadow-inner text-sm">
+                        <input type="text" placeholder="CVC" class="px-4 py-2 border bg-gray-800 rounded-lg shadow-inner text-sm">
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-between">
+                    <button onclick="renderView('list')" class="py-2 px-4 text-sm rounded-lg text-gray-400 hover:text-white transition">← Back to Car List</button>
+                    <button onclick="alert('Payment Successful! Thank you for booking.')"
+                            class="py-3 px-8 rounded-lg text-white font-bold bg-primary hover:bg-primary-dark transition duration-150">
+                        Confirm & Pay $215.50
+                    </button>
+                </div>
+            </div>
+        `;
+
+
+        // --- 2. VIEW MANAGEMENT ---
+        const views = {
+            'search': searchViewTemplate,
+            'list': carListViewTemplate,
+            'booking': bookingViewTemplate,
+        };
+
+        // Function to handle client-side routing/view switching
+        function renderView(viewName) {
+            const appContent = document.getElementById('app-content');
+            const template = views[viewName];
+            
+            if (template) {
+                appContent.innerHTML = template;
+                window.scrollTo(0, 0); // Scroll to top of the page on view change
+            } else {
+                appContent.innerHTML = `<h2 class="text-red-500">Error: View "${viewName}" not found.</h2>`;
+            }
+        }
+        
+        // --- 3. FORM HANDLING (Must be globally accessible since they are called from template buttons) ---
+        window.handleSearch = function(event) {
+            event.preventDefault();
 
             const location = document.getElementById('location').value;
             const pickup = document.getElementById('pickup-date').value;
             const dropoff = document.getElementById('dropoff-date').value;
+            const feedbackBox = document.getElementById('search-feedback-message');
             
-            // In a real application, you would send these values to the server 
-            // and redirect to a results page.
-            
-            // For now, we'll show a message box (using a simple alert replacement).
-            const message = `Searching for cars in: ${location}\nFrom: ${pickup}\nTo: ${dropoff}`;
-            
-            // A simple way to simulate a message box without using alert()
-            const searchWidget = document.getElementById('car-search-form').parentNode;
-            let messageBox = document.getElementById('search-feedback-message');
-
-            if (!messageBox) {
-                messageBox = document.createElement('div');
-                messageBox.id = 'search-feedback-message';
-                messageBox.className = 'mt-4 p-4 rounded-lg text-center font-medium bg-green-900/50 text-green-300 border border-green-700';
-                searchWidget.appendChild(messageBox);
+            // Basic validation
+            if (!location || !pickup || !dropoff) {
+                feedbackBox.classList.remove('hidden');
+                feedbackBox.classList.remove('bg-green-900/50', 'text-green-300', 'border-green-700');
+                feedbackBox.classList.add('bg-red-900/50', 'text-red-300', 'border-red-700');
+                feedbackBox.innerHTML = 'Please fill in all search fields (Location, Pick-up, and Drop-off dates).';
+                return;
             }
             
-            messageBox.innerHTML = `<strong>Search Successful!</strong><p class="mt-1 text-sm">${message.replace(/\n/g, '<br>')}</p>`;
-
-            // Scroll to the message box
-            messageBox.scrollIntoView({ behavior: 'smooth' });
+            // Success: Transition to the car list view
+            renderView('list');
         }
+
+
+        // --- 4. INITIALIZATION ---
+        // Initialize the first view on load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderView('search');
+        });
     </script>
 </body>
 </html>
